@@ -1,8 +1,12 @@
-import { useEffect, useState, type ReactNode } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useState, type ReactNode } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { ArrowDownRight, ArrowUpRight, BookOpen, ChevronRight, ExternalLink, Linkedin, Mail, Menu, Moon, Sun, Wrench, X } from 'lucide-react'
 import { development, education, experiences, profile, projects, skills } from './content'
 import { MechanicalMotion } from './components/MechanicalMotion'
+import { CinematicIntro } from './components/CinematicIntro'
+import { RMMark } from './components/RMMark'
+
+const MechanicalAssembly3D = lazy(() => import('./components/MechanicalAssembly3D'))
 import './styles.css'
 
 const nav = ['About', 'Education', 'Experience', 'Research', 'Projects', 'Skills', 'Contact']
@@ -21,6 +25,8 @@ function App() {
   const [active, setActive] = useState('About')
   const [filter, setFilter] = useState('All')
   const [theme, setTheme] = useState<'dark' | 'light'>(() => document.documentElement.dataset.theme === 'light' ? 'light' : 'dark')
+  const [introComplete, setIntroComplete] = useState(() => sessionStorage.getItem('rm-intro-seen') === 'true')
+  const [webgl, setWebgl] = useState(false)
 
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => entries.forEach((entry) => {
@@ -30,6 +36,8 @@ function App() {
     return () => observer.disconnect()
   }, [])
 
+  useEffect(() => { const canvas = document.createElement('canvas'); setWebgl(Boolean(canvas.getContext('webgl2') || canvas.getContext('webgl'))) }, [])
+
   useEffect(() => {
     document.documentElement.dataset.theme = theme
     document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'dark' ? '#090909' : '#f5f5f2')
@@ -37,11 +45,12 @@ function App() {
   }, [theme])
 
   const jump = (name: string) => { document.getElementById(name.toLowerCase())?.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' }); setMenu(false) }
+  const completeIntro = useCallback(() => { sessionStorage.setItem('rm-intro-seen', 'true'); setIntroComplete(true) }, [])
   const filtered = filter === 'All' ? projects : projects.filter((project) => project.filter === filter)
   const jsonLd = { '@context': 'https://schema.org', '@type': 'Person', name: profile.name, jobTitle: 'Mechanical Engineer', url: 'https://rsspector77.github.io/raghunath-portfolio/', sameAs: [profile.linkedin] }
-  return <><script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
+  return <>{!introComplete && <CinematicIntro onComplete={completeIntro} />}<script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
     <header className="site-header">
-      <a className="brand" href="#top" aria-label="Raghunath Mullick home">RM<span>+</span></a>
+      <a className="brand" href="#top" aria-label="Raghunath Mullick home"><RMMark /></a>
       <nav aria-label="Main navigation">{nav.map((item) => <button className={active === item ? 'active' : ''} onClick={() => jump(item)} key={item}>{item}</button>)}</nav>
       <div className="header-actions"><a className="header-link" href={profile.linkedin} target="_blank" rel="noreferrer">LinkedIn <ArrowUpRight size={14}/></a><button className="theme-toggle" type="button" aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`} onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}><Sun aria-hidden="true" size={14}/><span className="toggle-track" aria-hidden="true"><span/></span><Moon aria-hidden="true" size={14}/></button><button className="menu" aria-label={menu ? 'Close menu' : 'Open menu'} aria-expanded={menu} onClick={() => setMenu(!menu)}>{menu ? <X/> : <Menu/>}</button></div>
     </header>
@@ -54,7 +63,7 @@ function App() {
           <h1 id="hero-title"><motion.span className="name-line" initial={{ clipPath: reduced ? 'none' : 'inset(0 100% 0 0)', x: reduced ? 0 : -24, opacity: 0 }} animate={{ clipPath: 'inset(0 0% 0 0)', x: 0, opacity: 1 }} transition={{ delay: reduced ? 0 : 0.12, duration: reduced ? 0 : 0.88, ease: [0.16, 1, 0.3, 1] }}>RAGHUNATH</motion.span><motion.span className="name-line name-line-second" initial={{ clipPath: reduced ? 'none' : 'inset(0 100% 0 0)', x: reduced ? 0 : -24, opacity: 0 }} animate={{ clipPath: 'inset(0 0% 0 0)', x: 0, opacity: 1 }} transition={{ delay: reduced ? 0 : 0.88, duration: reduced ? 0 : 0.88, ease: [0.16, 1, 0.3, 1] }}>MULLICK</motion.span></h1>
           <motion.div className="hero-details" initial={{ opacity: 0, y: reduced ? 0 : 22 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: reduced ? 0 : 1.78, duration: reduced ? 0 : 0.64, ease: [0.16, 1, 0.3, 1] }}><p className="role">{profile.title}</p><p className="lede">{profile.summary}</p><div className="actions"><button className="button primary" onClick={() => jump('Projects')}>Explore my work <ArrowDownRight size={18}/></button><button className="button ghost" onClick={() => jump('Contact')}>Contact</button></div></motion.div>
         </div>
-        <motion.div className="mechanism-wrap" initial={{ opacity: 0, x: reduced ? 0 : 24 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: reduced ? 0 : 0.5, duration: reduced ? 0 : 0.9, ease: [0.16, 1, 0.3, 1] }}><MechanicalMotion reducedMotion={Boolean(reduced)} /></motion.div>
+        <motion.div className="mechanism-wrap" initial={{ opacity: 0, x: reduced ? 0 : 24 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: reduced ? 0 : 0.5, duration: reduced ? 0 : 0.9, ease: [0.16, 1, 0.3, 1] }}>{webgl && !reduced ? <Suspense fallback={<MechanicalMotion reducedMotion={false} />}><MechanicalAssembly3D /></Suspense> : <MechanicalMotion reducedMotion={Boolean(reduced)} />}</motion.div>
         <a className="scroll" href="#about">Scroll to explore <ArrowDownRight size={16}/></a>
       </section>
       <Section id="About" eyebrow="01 / Profile" title="Built on curiosity. Directed by purpose."><div className="split"><p className="large">Raghunath’s work is grounded in the mechanics of how things move, endure, and can be improved—with a particular interest in design, sustainable energy, and practical technical systems.</p><div><p>The portfolio brings together mechanical engineering education, documented technical training, applied projects in robotics and fabrication, and a growing research focus on sustainable energy. Every claim is kept intentionally specific to the information available.</p><a className="text-link" href={profile.linkedin} target="_blank" rel="noreferrer">Professional profile <ExternalLink size={15}/></a></div></div></Section>
@@ -66,7 +75,7 @@ function App() {
       <section className="personal"><p className="eyebrow">Beyond engineering</p><h2>Perspective is built<br/>outside the workshop, too.</h2><p>Interests noted in the supplied brief include cycling, photography, creative writing, and language learning.</p></section>
       <Section id="Contact" eyebrow="07 / Contact" title="Let’s connect around meaningful engineering."><div className="contact"><p>For research, engineering, or professional conversations, reach out by email or LinkedIn.</p><div className="actions"><a className="button primary" href={`mailto:${profile.email}`}><Mail size={18}/> Email Raghunath</a><a className="button ghost" href={profile.linkedin} target="_blank" rel="noreferrer"><Linkedin size={18}/> Connect on LinkedIn</a></div><small>Phone number, residential address, and downloadable CV are intentionally excluded pending explicit approval.</small></div></Section>
     </main>
-    <footer><a className="brand" href="#top">RM<span>+</span></a><p>© {new Date().getFullYear()} Raghunath Mullick. Designed for clarity and credibility.</p><a href="#top">Back to top ↑</a></footer>
+    <footer><a className="brand" href="#top"><RMMark compact /></a><p>© {new Date().getFullYear()} Raghunath Mullick. Designed for clarity and credibility.</p><a href="#top">Back to top ↑</a></footer>
   </>
 }
 
