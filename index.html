@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#07111f" />
+    <meta name="theme-color" content="#090909" />
     <meta name="description" content="Professional portfolio of Raghunath Mullick, mechanical engineer and sustainable engineering researcher." />
     <meta property="og:title" content="Raghunath Mullick | Mechanical Engineer" />
     <meta property="og:description" content="Mechanical engineering, sustainable energy research, design, simulation and robotics." />
@@ -11,6 +11,18 @@
     <meta property="og:url" content="https://rsspector77.github.io/raghunath-portfolio/" />
     <link rel="canonical" href="https://rsspector77.github.io/raghunath-portfolio/" />
     <title>Raghunath Mullick | Mechanical Engineer</title>
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem('rm-theme');
+          var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+          document.documentElement.dataset.theme = theme;
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', theme === 'light' ? '#f5f5f2' : '#090909');
+        } catch (error) {
+          document.documentElement.dataset.theme = 'dark';
+        }
+      }());
+    </script>
   </head>
   <body>
     <div id="root"></div>
