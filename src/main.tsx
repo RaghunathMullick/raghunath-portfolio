@@ -1,7 +1,7 @@
 import { lazy, Suspense, useCallback, useEffect, useState, type ReactNode } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { ArrowDownRight, ArrowUpRight, BookOpen, ChevronRight, ExternalLink, Linkedin, Mail, Menu, Moon, Sun, Wrench, X } from 'lucide-react'
-import { development, education, experiences, profile, projects, skills } from './content'
+import { development, education, experiences, profile, projects } from './content'
 import { MechanicalMotion } from './components/MechanicalMotion'
 import { CinematicIntro } from './components/CinematicIntro'
 import { RMMark } from './components/RMMark'
@@ -9,7 +9,7 @@ import { RMMark } from './components/RMMark'
 const MechanicalAssembly3D = lazy(() => import('./components/MechanicalAssembly3D'))
 import './styles.css'
 
-const nav = ['About', 'Education', 'Experience', 'Research', 'Projects', 'Skills', 'Contact']
+const nav = ['About', 'Education', 'Experience', 'Research', 'Projects', 'Contact']
 const reveal = { hidden: { opacity: 0, y: 28 }, visible: { opacity: 1, y: 0 } }
 
 function Section({ id, eyebrow, title, children }: { id: string, eyebrow: string, title: string, children: ReactNode }) {
@@ -47,7 +47,7 @@ function App() {
   const jump = (name: string) => { document.getElementById(name.toLowerCase())?.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' }); setMenu(false) }
   const completeIntro = useCallback(() => { sessionStorage.setItem('rm-intro-seen', 'true'); setIntroComplete(true) }, [])
   const filtered = filter === 'All' ? projects : projects.filter((project) => project.filter === filter)
-  const jsonLd = { '@context': 'https://schema.org', '@type': 'Person', name: profile.name, jobTitle: 'Mechanical Engineer', url: 'https://rsspector77.github.io/raghunath-portfolio/', sameAs: [profile.linkedin] }
+  const jsonLd = { '@context': 'https://schema.org', '@type': 'Person', name: profile.name, jobTitle: 'Mechanical Engineer', url: 'https://raghunathmullick.github.io/raghunath-portfolio/', sameAs: [profile.linkedin] }
   return <>{!introComplete && <CinematicIntro onComplete={completeIntro} />}<script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
     <header className="site-header">
       <a className="brand" href="#top" aria-label="Raghunath Mullick home"><RMMark /></a>
@@ -71,7 +71,7 @@ function App() {
       <Section id="Experience" eyebrow="03 / Experience" title="Learning in applied settings"><div className="cards three">{experiences.map((experience) => <article className="card" key={experience.title}><p className="card-label">{experience.type}</p><Wrench size={22}/><h3>{experience.title}</h3><h4>{experience.organization}</h4><p>{experience.text}</p></article>)}</div></Section>
       <Section id="Research" eyebrow="04 / Research" title="Engineering for a more sustainable energy future"><div className="research"><BookOpen size={30}/><div><p className="card-label">Conference publication / 2025</p><h3><em>A Review on Proximate Analysis of Solid Blend Biomass: Advancing Sustainable Energy Solutions.</em></h3><p>R. Mullick, A. R. Dey, and A. Ghatak. <em>Proceedings of the International Conference on New Trends in Science, Engineering, Technology and Management (ICNTSETM’25)</em>, P.S.V. College of Engineering and Technology, 2025, p. 134. ISBN 978-93-48505-24-8.</p></div></div><div className="interest-row"><span>Biomass</span><span>Alternative fuels</span><span>Sustainable energy</span><span>Mechanical engineering</span></div></Section>
       <Section id="Projects" eyebrow="05 / Selected work" title="Ideas made tangible"><div className="filters" aria-label="Project filters">{['All', 'Design', 'Robotics', 'Research'].map((item) => <button key={item} className={filter === item ? 'selected' : ''} onClick={() => setFilter(item)}>{item}</button>)}</div><div className="cards projects">{filtered.map((project, index) => <article className="project card" key={project.title}><div className="project-mark">0{index + 1}<span>{project.tag}</span></div><h3>{project.title}</h3><p>{project.description}</p><ul>{project.methods.map((method) => <li key={method}>{method}</li>)}</ul><p className="outcome"><b>Context:</b> {project.outcome}</p></article>)}</div></Section>
-      <Section id="Skills" eyebrow="06 / Toolkit" title="Technical range, thoughtfully applied"><div className="skill-grid">{skills.map(([category, ...items]) => <article key={category}><h3>{category}</h3><div>{items.map((item) => <span key={item}>{item}</span>)}</div></article>)}</div><div className="development"><p className="eyebrow">Professional development</p>{development.map((item) => <p key={item}>— {item}</p>)}</div></Section>
+      <section className="development-section"><div className="development"><p className="eyebrow">Professional development</p>{development.map((item) => <p key={item}>— {item}</p>)}</div></section>
       <section className="personal"><p className="eyebrow">Beyond engineering</p><h2>Perspective is built<br/>outside the workshop, too.</h2><p>Interests noted in the supplied brief include cycling, photography, creative writing, and language learning.</p></section>
       <Section id="Contact" eyebrow="07 / Contact" title="Let’s connect around meaningful engineering."><div className="contact"><p>For research, engineering, or professional conversations, reach out by email or LinkedIn.</p><div className="actions"><a className="button primary" href={`mailto:${profile.email}`}><Mail size={18}/> Email Raghunath</a><a className="button ghost" href={profile.linkedin} target="_blank" rel="noreferrer"><Linkedin size={18}/> Connect on LinkedIn</a></div><small>Phone number, residential address, and downloadable CV are intentionally excluded pending explicit approval.</small></div></Section>
     </main>

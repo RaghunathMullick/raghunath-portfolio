@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://rsspector77.github.io/raghunath-portfolio/sitemap.xml
+Sitemap: https://raghunathmullick.github.io/raghunath-portfolio/sitemap.xml
