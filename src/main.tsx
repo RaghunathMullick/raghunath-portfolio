@@ -1,11 +1,11 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
-import { ArrowDownRight, ArrowUpRight, BookOpen, ChevronRight, ExternalLink, Linkedin, Mail, Menu, Moon, Orbit, Sun, Wrench, X } from 'lucide-react'
+import { ArrowDownRight, ArrowUpRight, BookOpen, ChevronRight, ExternalLink, Linkedin, Mail, Menu, Moon, Sun, Wrench, X } from 'lucide-react'
 import { development, education, experiences, profile, projects, skills } from './content'
+import { MechanicalMotion } from './components/MechanicalMotion'
 import './styles.css'
 
 const nav = ['About', 'Education', 'Experience', 'Research', 'Projects', 'Skills', 'Contact']
-const nameLines = ['RAGHUNATH', 'MULLICK']
 const reveal = { hidden: { opacity: 0, y: 28 }, visible: { opacity: 1, y: 0 } }
 
 function Section({ id, eyebrow, title, children }: { id: string, eyebrow: string, title: string, children: ReactNode }) {
@@ -39,8 +39,6 @@ function App() {
   const jump = (name: string) => { document.getElementById(name.toLowerCase())?.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' }); setMenu(false) }
   const filtered = filter === 'All' ? projects : projects.filter((project) => project.filter === filter)
   const jsonLd = { '@context': 'https://schema.org', '@type': 'Person', name: profile.name, jobTitle: 'Mechanical Engineer', url: 'https://rsspector77.github.io/raghunath-portfolio/', sameAs: [profile.linkedin] }
-  const letters = nameLines.map((line) => line.split(''))
-
   return <><script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
     <header className="site-header">
       <a className="brand" href="#top" aria-label="Raghunath Mullick home">RM<span>+</span></a>
@@ -53,10 +51,10 @@ function App() {
         <div className="hero-grid" aria-hidden="true"><span/><span/><span/><span/></div>
         <div className="hero-copy">
           <motion.p className="eyebrow hero-eyebrow" initial={{ opacity: 0, y: reduced ? 0 : 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: reduced ? 0 : 0.55, duration: reduced ? 0 : 0.65 }}>Mechanical engineering / research / design</motion.p>
-          <h1 id="hero-title" aria-label="Raghunath Mullick">{letters.map((line, lineIndex) => <span className="name-line" key={lineIndex}>{line.map((letter, index) => <motion.span className="name-letter" aria-hidden="true" key={`${letter}-${index}`} initial={{ opacity: 0, y: reduced ? 0 : '105%', rotateX: reduced ? 0 : -68 }} animate={{ opacity: 1, y: 0, rotateX: 0 }} transition={{ delay: reduced ? 0 : 0.12 + lineIndex * 0.2 + index * 0.035, duration: reduced ? 0 : 0.9, ease: [0.16, 1, 0.3, 1] }}>{letter}</motion.span>)}</span>)}</h1>
-          <motion.div className="hero-details" initial={{ opacity: 0, y: reduced ? 0 : 22 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: reduced ? 0 : 0.94, duration: reduced ? 0 : 0.7, ease: [0.16, 1, 0.3, 1] }}><p className="role">{profile.title}</p><p className="lede">{profile.summary}</p><div className="actions"><button className="button primary" onClick={() => jump('Projects')}>Explore my work <ArrowDownRight size={18}/></button><button className="button ghost" onClick={() => jump('Research')}>View research</button></div></motion.div>
+          <h1 id="hero-title"><motion.span className="name-line" initial={{ clipPath: reduced ? 'none' : 'inset(0 100% 0 0)', x: reduced ? 0 : -24, opacity: 0 }} animate={{ clipPath: 'inset(0 0% 0 0)', x: 0, opacity: 1 }} transition={{ delay: reduced ? 0 : 0.12, duration: reduced ? 0 : 0.88, ease: [0.16, 1, 0.3, 1] }}>RAGHUNATH</motion.span><motion.span className="name-line name-line-second" initial={{ clipPath: reduced ? 'none' : 'inset(0 100% 0 0)', x: reduced ? 0 : -24, opacity: 0 }} animate={{ clipPath: 'inset(0 0% 0 0)', x: 0, opacity: 1 }} transition={{ delay: reduced ? 0 : 0.88, duration: reduced ? 0 : 0.88, ease: [0.16, 1, 0.3, 1] }}>MULLICK</motion.span></h1>
+          <motion.div className="hero-details" initial={{ opacity: 0, y: reduced ? 0 : 22 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: reduced ? 0 : 1.78, duration: reduced ? 0 : 0.64, ease: [0.16, 1, 0.3, 1] }}><p className="role">{profile.title}</p><p className="lede">{profile.summary}</p><div className="actions"><button className="button primary" onClick={() => jump('Projects')}>Explore my work <ArrowDownRight size={18}/></button><button className="button ghost" onClick={() => jump('Contact')}>Contact</button></div></motion.div>
         </div>
-        <motion.div className="blueprint" aria-hidden="true" initial={{ opacity: 0, scale: reduced ? 1 : 0.86, rotate: reduced ? 0 : -8 }} animate={{ opacity: 1, scale: 1, rotate: 0 }} transition={{ delay: reduced ? 0 : 0.72, duration: reduced ? 0 : 1.25, ease: [0.16, 1, 0.3, 1] }}><div className="orbit orbit-a"/><div className="orbit orbit-b"/><div className="core"><Orbit size={64}/></div><span className="measure m1">Ø 240</span><span className="measure m2">SYSTEM / 01</span><span className="axis"/></motion.div>
+        <motion.div className="mechanism-wrap" initial={{ opacity: 0, x: reduced ? 0 : 24 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: reduced ? 0 : 0.5, duration: reduced ? 0 : 0.9, ease: [0.16, 1, 0.3, 1] }}><MechanicalMotion reducedMotion={Boolean(reduced)} /></motion.div>
         <a className="scroll" href="#about">Scroll to explore <ArrowDownRight size={16}/></a>
       </section>
       <Section id="About" eyebrow="01 / Profile" title="Built on curiosity. Directed by purpose."><div className="split"><p className="large">Raghunath’s work is grounded in the mechanics of how things move, endure, and can be improved—with a particular interest in design, sustainable energy, and practical technical systems.</p><div><p>The portfolio brings together mechanical engineering education, documented technical training, applied projects in robotics and fabrication, and a growing research focus on sustainable energy. Every claim is kept intentionally specific to the information available.</p><a className="text-link" href={profile.linkedin} target="_blank" rel="noreferrer">Professional profile <ExternalLink size={15}/></a></div></div></Section>
